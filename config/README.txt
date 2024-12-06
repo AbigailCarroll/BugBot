@@ -1,0 +1,1 @@
+place real token in BugBot/bin/config.json
