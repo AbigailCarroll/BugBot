@@ -15,21 +15,16 @@ namespace BugBot.Managers
     {
         public static void Parse(string input, SocketMessage message)
         {
+            string pattern = @"<<.+?>>";
             List<string> strings = new List<string>();
 
-            while (input.IndexOf("<<") != -1) //could be replaced with a rege
+            foreach (Match match in Regex.Matches(input, pattern, RegexOptions.None, TimeSpan.FromSeconds(1)))
             {
-
-                int start = input.IndexOf("<<");
-                input = input.Substring(start + 2);
-                int end = input.IndexOf(">>");
-                strings.Add(input.Substring(0, end));
-                input = input.Substring(end + 2);
+                strings.Add(match.Value);
             }
 
             foreach (string s in strings)
             {
-                Console.WriteLine(s);
                 message.Channel.SendMessageAsync($"Card Name Recieved: {s}");
                 string findOutput = Trie.Find(s);
                 if (findOutput != "")
