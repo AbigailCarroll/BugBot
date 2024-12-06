@@ -17,7 +17,7 @@ namespace BugBot.Managers
         {
             List<string> strings = new List<string>();
 
-            while (input.IndexOf("<<") != -1)
+            while (input.IndexOf("<<") != -1) //could be replaced with a rege
             {
 
                 int start = input.IndexOf("<<");

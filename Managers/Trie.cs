@@ -10,7 +10,7 @@ namespace BugBot.Managers
     
     internal static class Trie
     {
-        public static Node root = new Node();
+        private static Node root = new Node();
         public static void Insert(string input)
         {
             root.Insert(input);
