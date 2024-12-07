@@ -13,32 +13,35 @@ namespace BugBot.Managers
 {
     internal static class Handle_Input
     {
-        public static void Parse(string input, SocketMessage message)
+        public static List<string> Parse(string input, SocketMessage message)
         {
             string pattern = @"<<.+?>>";
             List<string> strings = new List<string>();
 
-            foreach (Match match in Regex.Matches(input, pattern, RegexOptions.None, TimeSpan.FromSeconds(1)))
+            foreach (Match match in Regex.Matches(input, pattern, RegexOptions.None, TimeSpan.FromMilliseconds(50)))
             {
                 strings.Add(match.Value);
             }
 
-            foreach (string s in strings)
-            {
-                message.Channel.SendMessageAsync($"Card Name Recieved: {s}");
-                string findOutput = Trie.Find(s);
-                if (findOutput != "")
-                {
-                    Console.WriteLine("Find Output: " + findOutput);
-                    message.Channel.SendMessageAsync(findOutput);
-                }
-                else 
-                {
-                    Console.WriteLine("card not found");
-                    message.Channel.SendMessageAsync("Card Not Found");
-                }
+            return strings;
 
-                //message.Channel.SendMessageAsync(findOutput);
+
+           
+        }
+
+        public static void VerifyCardName(string name, SocketMessage message)
+        {
+            string verified = Trie.Find(name);
+            if (verified != "")
+            {
+                Console.WriteLine("Find Output: " + verified);
+                message.Channel.SendMessageAsync(verified);
+                message.Channel.SendMessageAsync(Database_Handler.getCard(verified, 0).getImagePath());
+            }
+            else
+            {
+                Console.WriteLine("card not found");
+                message.Channel.SendMessageAsync("Card Not Found");
             }
         }
 
@@ -51,6 +54,7 @@ namespace BugBot.Managers
             byte[] tempBytes;
             tempBytes = System.Text.Encoding.GetEncoding("ISO-8859-8").GetBytes(cardName);
             cardName = System.Text.Encoding.UTF8.GetString(tempBytes);
+            cardName = cardName.ToLower();
             return cardName;
         }
 

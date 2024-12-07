@@ -39,7 +39,7 @@ namespace BugBot.Objects.Search
         private void Insert_(string cardName)
         {
             
-            Console.WriteLine($"inserting {cardName}");
+           
 
             int reference = cardName[0] - 'a';
             if (children[reference] == null)

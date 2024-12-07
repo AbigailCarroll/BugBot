@@ -1,4 +1,5 @@
-﻿using Discord.Rest;
+﻿using BugBot.Managers;
+using Discord.Rest;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -31,9 +32,19 @@ namespace BugBot.Objects
         {
             elements.CleanPowersandCosts();
         }
+
+        public void CleanName()
+        {
+            this.name = Handle_Input.Clean_Input(this.name);
+        }
         public string getReference()
         {
             return reference;
+        }
+
+        public string getImagePath()
+        {
+            return imagePath;
         }
     }
 

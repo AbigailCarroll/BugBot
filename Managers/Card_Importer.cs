@@ -16,32 +16,34 @@ namespace BugBot.Managers
     {//itemsPerPage maimum is 36 greater values cause no bugs (that i've seen) but have no effect
         public static async void ImportCards()
         {
-            List<Card> allCards = new List<Card>();
-            
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
             Console.WriteLine("Starting Card Import");
             string pageLength = "36";
-            string language = "en-en";
+            string language = "en-us"; //for whatever reason en-en language (british english?) sends invalid links for the imagepath field.
             string root = "https://api.altered.gg/cards";
             
 
             int page = 1;
             int totalItems = -1;
-            
+            int finalTotalItems = -1;
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(root);
+
+            List<Card> allCards = new List<Card>();
 
             while (totalItems != 0)
             {
                 string parameters = $"?itemsPerPage={pageLength}&locale={language}&page={page}";
                 HttpResponseMessage response = await client.GetAsync(parameters).ConfigureAwait(false);
-                Console.WriteLine("Response Recieved");
+                
 
                 if (response.IsSuccessStatusCode)
                 {
 
 
-                    Console.WriteLine("Response Success");
+                    
 
                     //var jsonString = await response.Content.ReadAsStringAsync();
                     //API_Response cards = JsonConvert.DeserializeObject<API_Response>(jsonString);
@@ -51,6 +53,10 @@ namespace BugBot.Managers
                     JObject temp = JObject.Parse(jsonString);
 
                     API_Response cards = JsonConvert.DeserializeObject<API_Response>(jsonString);
+                    if(totalItems > finalTotalItems)
+                    {
+                        finalTotalItems = totalItems;
+                    }
 
                     totalItems = cards.getTotalItems();
 
@@ -59,7 +65,8 @@ namespace BugBot.Managers
                         foreach (Card c in cards.getMembers())
                         {
                             c.CleanPowersandCosts();
-                            Console.WriteLine(c.getName());
+                            
+                    
                             allCards.Add(c);
                             Trie.Insert(c.getName());
                         }
@@ -79,8 +86,11 @@ namespace BugBot.Managers
 
             }
 
-            Console.WriteLine($"Import Done, Total number of cards imported is {allCards.Count()}");
-            Card_DataBase database = new Card_DataBase(allCards);
+            Console.WriteLine($"Import Done, Total number of cards imported is {allCards.Count()}, this should be equal to {finalTotalItems}");
+            watch.Stop();
+            Console.WriteLine("Import Time: " + watch.ElapsedMilliseconds + "ms");
+            Database_Handler.addCards(allCards);
+            
 
 
 

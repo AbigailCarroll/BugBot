@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BugBot.config;
 using Discord.WebSocket;
 using BugBot.Managers;
+using BugBot.Objects;
 
 namespace BugBot
 {
@@ -47,7 +48,14 @@ namespace BugBot
             if (message.Author.IsBot) { return; }
             //await message.Channel.SendMessageAsync("Hello!");
             Console.WriteLine("Message Content: " + message.Content);
-            Handle_Input.Parse(message.Content, message);
+            
+            
+            List<string> messageCards = new List<string>();
+            messageCards = Handle_Input.Parse(message.Content, message);
+            foreach(string s in messageCards)
+            {
+                Handle_Input.VerifyCardName(s, message);
+            }
             return;
         }
 
