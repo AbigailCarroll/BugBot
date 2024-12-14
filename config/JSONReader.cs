@@ -23,6 +23,8 @@ namespace BugBot.config
                 this.prefix = data.prefix;
             }
         }
+
+        
     }
     internal sealed class JSONStructure
     {

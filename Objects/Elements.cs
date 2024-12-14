@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -61,6 +62,44 @@ namespace BugBot.Objects
             {
                 throw new InvalidCastException("ERR: Could not parse string " + s + " to int, did the API change?");
             }
+        }
+
+        public string getCosts()
+        {
+            return mainCost + "/" + recallCost;
+        }
+
+        public string getPowers()
+        {
+            if (forestPower == null)
+            {
+                return null;
+            }
+            return forestPower + "/" + mountainPower + "/" + oceanPower;
+        }
+
+        public int? getReserveSlots()
+        {
+            return reserveSlots;
+        }
+
+        public int? getLandmarkSlots()
+        {
+            return permanentSlots;
+        }
+
+        public string getEffects()
+        {
+            string output = "";
+            if (mainEffect != null)
+            {
+                output += "Main Effect: " + mainEffect;
+            }
+            if (echoEffect != null)
+            {
+                output += "\nEcho Effect: " + echoEffect; 
+            }
+            return output;
         }
 
     }

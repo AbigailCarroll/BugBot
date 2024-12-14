@@ -19,16 +19,16 @@ namespace BugBot.Objects
             cardMap = new Dictionary<string, List<Card>>();
             foreach (Card card in cardList)
             {
-                if (!cardMap.ContainsKey(card.getName()))
+                if (!cardMap.ContainsKey(card.getCleanName()))
                 {
                     List<Card> newList = new List<Card>();
                     newList.Add(card);
-                    cardMap.Add(card.getName(), newList);
-                    Console.WriteLine($"added {card.getName()}, with reference {card.getReference()} to database");
+                    cardMap.Add(card.getCleanName(), newList);
+                    Console.WriteLine($"added {card.getCleanName()}, with reference {card.getReference()} to database");
                 }
                 else
                 {
-                    cardMap[card.getName()].Add(card);
+                    cardMap[card.getCleanName()].Add(card);
                 }  
             }
 

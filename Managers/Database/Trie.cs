@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BugBot.Managers
+namespace BugBot.Managers.Database
 {
-    
+
     internal static class Trie
     {
         private static Node root = new Node();

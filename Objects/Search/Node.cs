@@ -32,7 +32,7 @@ namespace BugBot.Objects.Search
         public void Insert(string cardName)
         {
             cardName = cardName.ToLower();
-            cardName = Handle_Input.Clean_Input(cardName);
+            cardName = Input_Manager.Clean_Input(cardName);
             Insert_(cardName);
         }
 
@@ -64,7 +64,6 @@ namespace BugBot.Objects.Search
             //will only return a positive result if the autocomplete is unambiguous, so there is only one path to traverse
             //could make this more efficient my minimising the trie but i cba right now.
         {
-            Console.WriteLine("Attempting autocomplete of string " + output);
             int childFound = -1;
             for (int i = 0; i < this.children.Length; i++)
             {
@@ -115,7 +114,7 @@ namespace BugBot.Objects.Search
         public string Find(string cardName)
         {
             cardName = cardName.ToLower();
-            cardName = Handle_Input.Clean_Input(cardName);
+            cardName = Input_Manager.Clean_Input(cardName);
 
             return Find_(cardName, "");
         }

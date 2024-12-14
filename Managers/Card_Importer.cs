@@ -9,6 +9,7 @@ using System.Text.Json;
 using Newtonsoft.Json.Linq;
 using BugBot.Objects;
 using BugBot.Objects.Search;
+using BugBot.Managers.Database;
 
 namespace BugBot.Managers
 {
@@ -65,10 +66,7 @@ namespace BugBot.Managers
                         foreach (Card c in cards.getMembers())
                         {
                             c.CleanPowersandCosts();
-                            
-                    
                             allCards.Add(c);
-                            Trie.Insert(c.getName());
                         }
                     }
                     else
@@ -86,16 +84,17 @@ namespace BugBot.Managers
 
             }
 
+            
+            Database_Handler.addCards(allCards);
             Console.WriteLine($"Import Done, Total number of cards imported is {allCards.Count()}, this should be equal to {finalTotalItems}");
+            
             watch.Stop();
             Console.WriteLine("Import Time: " + watch.ElapsedMilliseconds + "ms");
-            Database_Handler.addCards(allCards);
-            
 
 
 
 
-           
+
         }
     }
 }
