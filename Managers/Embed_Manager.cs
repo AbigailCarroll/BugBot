@@ -44,6 +44,7 @@ namespace BugBot.Managers
                         rarity = "C";
                         break;
                     case "R1":
+                    case "R":
                         rarity = "R1";
                         break;
                     case "R2":
