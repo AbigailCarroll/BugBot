@@ -66,6 +66,7 @@ namespace BugBot.Managers
                         foreach (Card c in cards.getMembers())
                         {
                             c.CleanPowersandCosts();
+                            c.setRulings();
                             allCards.Add(c);
                         }
                     }
@@ -96,5 +97,6 @@ namespace BugBot.Managers
 
 
         }
+
     }
 }

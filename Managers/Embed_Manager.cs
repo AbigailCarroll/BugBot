@@ -78,11 +78,27 @@ namespace BugBot.Managers
                 }
 
             }
+
+            
             
             string uncleanName = tokens[0];
             tokens[0] = Input_Manager.Clean_Input(tokens[0]);
 
-            
+            bool fullImage = false;
+            bool rulings = false;
+
+
+            if (uncleanName[0] == '!')
+            {
+                fullImage = true;
+                uncleanName = uncleanName.Substring(1);
+            }
+            else if (uncleanName[0] == '?')
+            {
+                rulings = true;
+                uncleanName = uncleanName.Substring(1);
+            }
+
 
             if (Database_Handler.getCardByReference(uncleanName) == null)
             {
@@ -105,10 +121,15 @@ namespace BugBot.Managers
                 return CardNotFound(uncleanName, rarity);
             }
 
-            
 
-
-           
+            if (fullImage)
+            {
+                return FullImageEmbed(card, language);
+            }
+            if(rulings)
+            {
+                return RulesEmbed(card, language);
+            }
 
 
 
@@ -116,6 +137,46 @@ namespace BugBot.Managers
             return BuildEmbed(card, language);
         }
 
+
+        private static Embed FullImageEmbed(Card card, string langauge)
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+
+            embed.ImageUrl = card.getImagePath();
+            if (card.getRarity() == "Rare")
+            {
+                embed.WithColor(Color.Blue);
+            }
+            else if (card.getRarity() == "Unique")
+            {
+                embed.WithColor(Color.Gold);
+            }
+
+            return embed.Build();
+        }
+
+        private static Embed RulesEmbed(Card card, string language)
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+
+            embed.WithTitle(card.getName())
+                .WithUrl("https://www.altered.gg/cards/" + card.getReference())
+                .WithThumbnailUrl(card.getImagePath());
+
+            List<string> rulings = card.getRulings();
+
+            bool inline = false;
+            int i = 1;
+
+            foreach(string ruling in rulings)
+            {
+                embed.AddField(i + ".", ruling, inline);
+                i++;
+            }
+
+
+            return embed.Build();
+        }
         
 
         private static Embed CardNotFound(string cardName, string rarity) 
@@ -124,7 +185,7 @@ namespace BugBot.Managers
 
             embed.Title = "Card Not Found";
             embed.Color = Color.Red;
-            embed.Description = $"Card \"{cardName}\" with rarity \"{rarity}\"was not found. \n Check your spelling and try again.";
+            embed.Description = $"Card \"{cardName}\" with rarity \"{rarity}\" was not found. \n Check your spelling and try again.";
 
             return embed.Build();
         }
@@ -200,6 +261,8 @@ namespace BugBot.Managers
 
             return embed.Build() ;
         }
+
+        
 
         
 

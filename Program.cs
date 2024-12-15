@@ -8,6 +8,8 @@ using BugBot.config;
 using Discord.WebSocket;
 using BugBot.Managers;
 using BugBot.Objects;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace BugBot
 {
@@ -40,7 +42,8 @@ namespace BugBot
 
             Console.WriteLine("bot online!");
 
-            
+            await client.SetGameAsync("01000010 00101110 01000010 00001010 00001010");
+            UpdateActivity();
 
             await Task.Delay(-1);
         }
@@ -77,6 +80,30 @@ namespace BugBot
             return Task.CompletedTask;
         }
 
+        private static System.Timers.Timer timer = new System.Timers.Timer();
+
+        private static void UpdateActivity()
+        {
+            timer.Interval = 300000;
+            timer.Elapsed += OnTimedEvent;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+        }
+
+
+        public static Random rand = new Random();
+        private static void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            string[] activities = {"Brassbug Hive", "More Brassbugs!", "Sticky Note Seal", "Axiom", "Bravos", "Lyra", "Muna", "Ordis", "Yzmir", "My third permanent :(",
+                    "All of the Sabotage", "All of the Resupply", "All three uniques", "Boom!", "Everything into reserve"};
+
+            int r = rand.Next(activities.Length);
+
+            client.SetGameAsync(activities[r]);
+        }
+
+        
+
     }
 }
 
@@ -85,6 +112,9 @@ namespace BugBot
 /*
  TODO: 
  * Implement Embeds to display info nicely on the discord side: https://docs.discordnet.dev/api/Discord.Embed.html?q=embed DONE
+ * 
+ * Add tags for getting just the card image and rulings eg <<!Kelon Elemental>> for the kelon elemental image and <<?Kelon elemental>> for the rulings
+ * 
  * Implement autocorrect to go along with autocomplete: https://medium.com/@willsentance/how-to-write-your-own-spellchecker-and-autocorrect-algorithm-in-under-80-lines-of-code-6d65d21bb7b6
  * ^ need to come up with a way to make those two work together, for instance autocomplete as is doesn't work when there is a typo and 
  *   this autocorrect method wouldn't work on imcomplete card names

@@ -23,6 +23,8 @@ namespace BugBot.Managers
 
             HashSet<Embed> embeds = new HashSet<Embed>();
 
+            //throw new Exception("Test");
+
             foreach (Match match in Regex.Matches(input, pattern, RegexOptions.None, TimeSpan.FromMilliseconds(50)))
             {
                 string[] tokens = match.Groups[1].Captures[0].Value.Split("|");

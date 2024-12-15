@@ -37,8 +37,7 @@ namespace BugBot.Managers.Database
                     Dictionary<string, Card> newDict = new Dictionary<string, Card>();
                     newDict.Add(rarityCode, card);
 
-
-                    cardMap.Add(card.getCleanName(), newDict);
+                    cardMap.Add(card.getCleanName(), newDict);             
                     Trie.Insert(card.getCleanName());
                 }
                 else if (!cardMap[card.getCleanName()].ContainsKey(rarityCode))
