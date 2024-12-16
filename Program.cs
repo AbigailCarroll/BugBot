@@ -111,17 +111,17 @@ namespace BugBot
 
 /*
  TODO: 
- * Implement Embeds to display info nicely on the discord side: https://docs.discordnet.dev/api/Discord.Embed.html?q=embed DONE
- * 
- * Add tags for getting just the card image and rulings eg <<!Kelon Elemental>> for the kelon elemental image and <<?Kelon elemental>> for the rulings
  * 
  * Implement autocorrect to go along with autocomplete: https://medium.com/@willsentance/how-to-write-your-own-spellchecker-and-autocorrect-algorithm-in-under-80-lines-of-code-6d65d21bb7b6
  * ^ need to come up with a way to make those two work together, for instance autocomplete as is doesn't work when there is a typo and 
  *   this autocorrect method wouldn't work on imcomplete card names
  *   
  * Implement foreign language support
+ * 
+ * 
  * Make SQL database to host card info rather than calling from the database on startup, not only is this bad for consuming api resources but
  * ^ would be good to have is the API changes/goes down.
+ * ^ ^ PRIORITY
  * 
  * 
  * Add a seperate branch in the trie for cards beginning with "the", so "The Frog Prince" can be searched for with the input "Frog Prince"
