@@ -168,6 +168,22 @@ namespace BugBot.Managers
             bool inline = false;
             int i = 1;
 
+            if (card.getRarity() == "Rare")
+            {
+                embed.WithColor(Color.Blue);
+            }
+            else if (card.getRarity() == "Unique")
+            {
+                embed.WithColor(Color.Gold);
+            }
+
+
+            if (rulings.Count == 0)
+            {
+                embed.Description = "This card has no rulings";
+                return embed.Build() ;
+            }
+
             foreach(string ruling in rulings)
             {
                 embed.AddField(i + ".", ruling, inline);
