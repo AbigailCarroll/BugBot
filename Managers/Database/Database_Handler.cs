@@ -49,8 +49,9 @@ namespace BugBot.Managers.Database
 
         public static void addCard(Card card)
         {
+            
             RegexOptions options = RegexOptions.RightToLeft;
-            string pattern = "_(C|U\\d*|R\\d)$";
+            string pattern = "_(C|U_\\d*|R\\d)$";
             string rarityCode = Regex.Match(card.getReference(), pattern, options, TimeSpan.FromMilliseconds(50)).Groups[1].Captures[0].Value;
             card.CleanName();
             if (!cardMap.ContainsKey(card.getCleanName()))
@@ -60,9 +61,14 @@ namespace BugBot.Managers.Database
                 cardMap.Add(card.getCleanName(), newDict);
                 Trie.Insert(card.getCleanName());
             }
-            else
+            else if (!cardMap[card.getCleanName()].ContainsKey(rarityCode))
             {
                 cardMap[card.getCleanName()].Add(rarityCode, card);
+            }
+
+            if(!referenceMap.ContainsKey(card.getReference()))
+            {
+                referenceMap.Add(card.getReference(), card);
             }
         }
 

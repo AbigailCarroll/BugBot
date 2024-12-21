@@ -33,7 +33,10 @@ namespace BugBot
             client.Log += Log;
 
 
-            var token = jsonReader.token;
+            string token = jsonReader.token;
+
+            Console.WriteLine(token);
+
 
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
@@ -51,7 +54,7 @@ namespace BugBot
         private static async Task MessageReceived(SocketMessage message)
         {
             if (message.Author.IsBot) { return; }
-            try
+            /*try
             {
                 HashSet<Embed> embeds = Input_Manager.Parse(message.Content);
                 foreach (Embed embed in embeds)
@@ -62,14 +65,16 @@ namespace BugBot
             }
             catch (Exception e) 
             {
-                var jsonReader = new JSONReader();
-                await jsonReader.ReadJSON();
-
                 Console.WriteLine("ERROR "+ DateTime.Now+":  " + e.Message);
                 await client.GetGuild(1306971465220100169).GetTextChannel(1316248768034639972).SendMessageAsync("Error: " + e.Message);
 
                 Embed embed = Embed_Manager.UnhandledError();
                 await message.Channel.SendMessageAsync(embed: embed,messageReference: new MessageReference(message.Id));
+            }*/
+            HashSet<Embed> embeds = Input_Manager.Parse(message.Content);
+            foreach (Embed embed in embeds)
+            {
+                await message.Channel.SendMessageAsync(embed: embed, messageReference: new MessageReference(message.Id));
             }
             return;
         }
@@ -118,6 +123,7 @@ namespace BugBot
  *   
  * Implement foreign language support
  * 
+ * remove hashes from rare version effects.
  * 
  * Make SQL database to host card info rather than calling from the database on startup, not only is this bad for consuming api resources but
  * ^ would be good to have is the API changes/goes down.

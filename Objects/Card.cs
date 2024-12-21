@@ -28,8 +28,6 @@ namespace BugBot.Objects
         [JsonProperty("elements")] private Elements elements { get; set; }
 
         private List<Ruling> rulings { get; set; }
-        private List<string> questions { get; set; }
-        private List<string> answers { get; set; }
 
         public string getName() //
         {
@@ -158,6 +156,7 @@ namespace BugBot.Objects
 
             }
         }
+
 
       
 

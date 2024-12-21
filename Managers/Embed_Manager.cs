@@ -25,6 +25,7 @@ namespace BugBot.Managers
         {
             string language = "en-us";
             string rarity = "C";
+            bool unique = false;
             Card card;
 
             
@@ -66,10 +67,13 @@ namespace BugBot.Managers
                         language = "it-it";
                         break;
                     default:
-                        if (Regex.Match(tokens[i], "U\\d").Success)
+                        if (Regex.Match(tokens[i], "U_\\d+").Success)
                         {
+                            Console.WriteLine("Tokens[i]: " + tokens[i]);
+                            rarity = tokens[i];
+                            Console.WriteLine("Rarity: "+rarity);
+                            unique = true;
                             break;
-                            //handle uniques, skip for now
                         }
                         else
                         {
@@ -105,7 +109,24 @@ namespace BugBot.Managers
                 string foundName = Trie.Find(tokens[0]);
                 if (Database_Handler.getCard(foundName, rarity) == null)
                 {
-                    return CardNotFound(uncleanName, rarity);
+                    Card temp = Card_Importer.ImportUnique(uncleanName).Result;                
+                    if (temp == null)
+                    {
+                        temp = Card_Importer.ImportUnique(foundName, rarity).Result;
+                        if (unique && temp == null)
+                        {
+                            return UniqueNotScanned(uncleanName, rarity);
+                        }
+                        card = Database_Handler.getCard(foundName, rarity);
+                        if (card == null)
+                        {
+                            return CardNotFound(uncleanName, rarity);
+                        }   
+                    }
+                    else
+                    {
+                        card = Card_Importer.ImportUnique(uncleanName).Result;                      
+                    }
                 }
                 else
                 {
@@ -163,32 +184,40 @@ namespace BugBot.Managers
                 .WithUrl("https://www.altered.gg/cards/" + card.getReference())
                 .WithThumbnailUrl(card.getImagePath());
 
-            List<string> rulings = card.getRulings();
-
-            bool inline = false;
-            int i = 1;
-
-            if (card.getRarity() == "Rare")
+            if (card.getRarity() == "Unique")
             {
-                embed.WithColor(Color.Blue);
+                embed.Description = "Unfortunately, unique cards do not have rulings in the API, check the rulings for the rare or common version instead";
             }
-            else if (card.getRarity() == "Unique")
+            else
             {
-                embed.WithColor(Color.Gold);
-            }
+                List<string> rulings = card.getRulings();
+
+                bool inline = false;
+                int i = 1;
+
+                if (card.getRarity() == "Rare")
+                {
+                    embed.WithColor(Color.Blue);
+                }
+                else if (card.getRarity() == "Unique")
+                {
+                    embed.WithColor(Color.Gold);
+                }
 
 
-            if (rulings.Count == 0)
-            {
-                embed.Description = "This card has no rulings";
-                return embed.Build() ;
-            }
+                if (rulings.Count == 0)
+                {
+                    embed.Description = "This card has no rulings";
+                    return embed.Build();
+                }
 
-            foreach(string ruling in rulings)
-            {
-                embed.AddField(i + ".", ruling, inline);
-                i++;
+                foreach (string ruling in rulings)
+                {
+                    embed.AddField(i + ".", ruling, inline);
+                    i++;
+                }
             }
+           
 
 
             return embed.Build();
@@ -226,6 +255,17 @@ namespace BugBot.Managers
             embed.Description = "Something went wrong, this error has been reported. \n This bot doesn't store user messages, if the problem persists create a new issue on the github page at https://github.com/AbigailCarroll/BugBot/issues with the message that triggered this.";
 
             return embed.Build() ;
+        }
+
+        private static Embed UniqueNotScanned(string uncleanName, string rarity)
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+
+            embed.Title = "Unique not Scanned";
+            embed.Color = Color.Red;
+            embed.Description = "The unique requested has not been scanned yet and as such is not available via the API";
+
+            return embed.Build();
         }
 
         private static Embed BuildEmbed(Card card, string language)

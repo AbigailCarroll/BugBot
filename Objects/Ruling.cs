@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Discord.Rest;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,5 +28,7 @@ namespace BugBot.Objects
         {
             return this.answer;
         }
+
+        
     }
 }

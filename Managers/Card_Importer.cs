@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using BugBot.Objects;
 using BugBot.Objects.Search;
 using BugBot.Managers.Database;
+using System.Security.Cryptography.Xml;
 
 namespace BugBot.Managers
 {
@@ -50,8 +51,6 @@ namespace BugBot.Managers
                     //API_Response cards = JsonConvert.DeserializeObject<API_Response>(jsonString);
 
                     string jsonString = await response.Content.ReadAsStringAsync();
-
-                    JObject temp = JObject.Parse(jsonString);
 
                     API_Response cards = JsonConvert.DeserializeObject<API_Response>(jsonString);
                     if(totalItems > finalTotalItems)
@@ -98,5 +97,48 @@ namespace BugBot.Managers
 
         }
 
+        public static async Task<Card> ImportUnique(string reference)
+        {
+            Card unique = null;
+           
+
+            string language = "en-en";
+
+            string parameters = "?" + language;
+            string root = "https://api.altered.gg/cards/" + reference;
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(root);
+
+            HttpResponseMessage response = await client.GetAsync(parameters).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonString = await response.Content.ReadAsStringAsync();
+
+                unique = JsonConvert.DeserializeObject<Card>(jsonString);
+
+                unique.CleanPowersandCosts();
+                //unique.setRulings(); as of now unique cards do not have rulings in the API
+                Database_Handler.addCard(unique);
+                return unique;
+            }
+
+            return null;
+        }
+
+
+        public static async Task<Card> ImportUnique(string name, string number) //takes the name of the card and the unique number in the form "U_0000"
+        {
+            string reference = "";
+            if (Database_Handler.getCard(name, "C") == null)
+            {
+                return null;
+            }
+            reference = Database_Handler.getCard(name, "C").getReference();
+            reference = reference.Remove(reference.Length - 1);
+            reference += number;
+
+            return ImportUnique(reference).Result;
+        }
     }
 }
