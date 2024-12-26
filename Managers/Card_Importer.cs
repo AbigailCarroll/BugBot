@@ -16,7 +16,8 @@ namespace BugBot.Managers
 {
     public static class Card_Importer
     {//itemsPerPage maimum is 36 greater values cause no bugs (that i've seen) but have no effect
-        public static async void ImportCards()
+        
+        public static async Task ImportCards()
         {
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
@@ -66,7 +67,9 @@ namespace BugBot.Managers
                         {
                             c.CleanPowersandCosts();
                             c.setRulings();
+                            c.AddEmotes();
                             allCards.Add(c);
+                           // Console.WriteLine($"adding card with name {c.getName()} and reference {c.getReference()}");
                         }
                     }
                     else
@@ -91,6 +94,7 @@ namespace BugBot.Managers
             watch.Stop();
             Console.WriteLine("Import Time: " + watch.ElapsedMilliseconds + "ms");
 
+            //Database_Handler.SerializeCards();
 
 
 
@@ -118,6 +122,7 @@ namespace BugBot.Managers
                 unique = JsonConvert.DeserializeObject<Card>(jsonString);
 
                 unique.CleanPowersandCosts();
+                unique.AddEmotes();
                 //unique.setRulings(); as of now unique cards do not have rulings in the API
                 Database_Handler.addCard(unique);
                 return unique;
@@ -140,5 +145,6 @@ namespace BugBot.Managers
 
             return ImportUnique(reference).Result;
         }
+
     }
 }

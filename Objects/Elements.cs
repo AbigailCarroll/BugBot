@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using BugBot.Managers.Emotes;
 using Newtonsoft.Json;
 
 namespace BugBot.Objects
@@ -20,8 +22,8 @@ namespace BugBot.Objects
 
         [JsonProperty("MOUNTAIN_POWER")] private string? mountainPowerRAW;
 
-        [JsonProperty("FOREST_POWER")] private string? forestPowerRAW; //need the raw variables to convert to int after json deserialisation
-        //couldn't figure out a way to do this faster than how Naurra bot did it. if you have a method that has better space and time compleity dm me.
+        [JsonProperty("FOREST_POWER")] private string? forestPowerRAW; 
+
         [JsonProperty("MAIN_EFFECT")] private string? mainEffect;
 
         [JsonProperty("ECHO_EFFECT")] private string? echoEffect;
@@ -97,9 +99,38 @@ namespace BugBot.Objects
             }
             if (echoEffect != null)
             {
-                output += "\nEcho Effect: " + echoEffect; 
+                output += "\n" + echoEffect; 
             }
             return output;
+        }
+
+        public void AddEmotes()
+        {
+            string pattern = "{.}";
+            MatchEvaluator evaluator = new MatchEvaluator(ReplaceCode);
+
+
+            if (mainEffect != null)
+            {
+                mainEffect = mainEffect.Replace("[]", "");
+                mainEffect = mainEffect.Replace("[", "**");
+                mainEffect = mainEffect.Replace("]", "**");
+                mainEffect = Regex.Replace(mainEffect, pattern, evaluator);
+            }
+
+            if (echoEffect != null)
+            {
+                echoEffect = echoEffect.Replace("[]", "");
+                echoEffect = echoEffect.Replace("[", "**");
+                echoEffect = echoEffect.Replace("]", "**");
+                echoEffect = Regex.Replace(echoEffect, pattern, evaluator);
+            }
+
+        }
+
+        private string ReplaceCode(Match m)
+        {         
+            return Emote_Manager.GetEmote(m.Value.ToUpper());
         }
 
     }

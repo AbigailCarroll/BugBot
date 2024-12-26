@@ -10,6 +10,7 @@ using BugBot.Managers;
 using BugBot.Objects;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using BugBot.Managers.Emotes;
 
 namespace BugBot
 {
@@ -24,6 +25,11 @@ namespace BugBot
             var jsonReader = new JSONReader();
             await jsonReader.ReadJSON();
 
+
+            await Emote_Manager.LoadEmotes("emotes.json");
+            await Card_Importer.ImportCards();
+            
+
             var config = new DiscordSocketConfig { GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent};
            
 
@@ -35,13 +41,8 @@ namespace BugBot
 
             string token = jsonReader.token;
 
-            Console.WriteLine(token);
-
-
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
-
-            Card_Importer.ImportCards();
 
             Console.WriteLine("bot online!");
 

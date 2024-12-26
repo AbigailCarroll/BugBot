@@ -1,4 +1,5 @@
 ﻿using BugBot.Managers.Database;
+using BugBot.Managers.Emotes;
 using BugBot.Objects;
 using Discord;
 using Discord.WebSocket;
@@ -278,7 +279,8 @@ namespace BugBot.Managers
                 .WithThumbnailUrl(card.getImagePath())
                 .WithDescription(card.getEffects())
                 .AddField("Type", card.getCardType(), inline)
-                .AddField("Faction", card.getFaction(), inline);
+                .AddField("Faction", Emote_Manager.GetEmote(card.getFaction())+ " " + card.getFaction() , inline);
+
            
                   
             string cardType = card.getCardType();

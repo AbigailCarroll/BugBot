@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Joins;
 using System.Runtime.CompilerServices;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BugBot.Objects;
 using Discord.Rest;
+using Newtonsoft.Json;
 using static System.Windows.Forms.Design.AxImporter;
 
 namespace BugBot.Managers.Database
@@ -99,6 +101,20 @@ namespace BugBot.Managers.Database
             }
             //Console.WriteLine("Card with reference: " + reference + " Not found");
             return null;
+        }
+
+        public static async void SerializeCards()
+        {
+            //string output = JsonConvert.SerializeObject(cardMap);
+
+            JsonSerializer serializer = new JsonSerializer();
+
+            using (StreamWriter sw = new StreamWriter("cards.json"))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, cardMap);
+                // {"ExpiryDate":new Date(1230375600000),"Price":0}
+            }
         }
     }
 }
